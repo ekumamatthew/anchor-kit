@@ -754,6 +754,7 @@ describe('MVP Express-mounted integration', () => {
     expect(response.body.asset_issuer).toBe(
       'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5',
     );
+    expect(response.body.account).toBe(clientKeypair.publicKey());
     expect(response.body).not.toHaveProperty('idempotency_replay');
   });
 
@@ -789,6 +790,7 @@ describe('MVP Express-mounted integration', () => {
     expect(response.body.id).toBe(transactionId);
     expect(response.body.interactive_url).toBe(depositInteractiveUrl);
     expect(response.body.status).toBe('pending_user_transfer_start');
+    expect(response.body.account).toBe(clientKeypair.publicKey());
     expect(response.body.idempotency_replay).toBe(true);
   });
 
@@ -1390,6 +1392,7 @@ describe('MVP Express-mounted integration', () => {
     });
 
     expect(firstResponse.status).toBe(201);
+    expect(firstResponse.body.account).toBe(clientKeypair.publicKey());
     const firstTxId = firstResponse.body.id;
 
     const secondResponse = await invoke({
