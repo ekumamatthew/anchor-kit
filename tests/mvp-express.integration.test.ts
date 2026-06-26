@@ -899,6 +899,7 @@ describe('MVP Express-mounted integration', () => {
     expect(unsignedResponse.status).toBe(400);
     expect(unsignedResponse.body).toEqual({
       error: 'webhook_error',
+      event_id: 'evt_misconfigured',
       message: 'Webhook processing failed',
     });
 
@@ -920,6 +921,7 @@ describe('MVP Express-mounted integration', () => {
     expect(signedResponse.status).toBe(400);
     expect(signedResponse.body).toEqual({
       error: 'webhook_error',
+      event_id: 'evt_misconfigured',
       message: 'Webhook processing failed',
     });
     expect(misconfiguredWebhookCallbackCount).toBe(0);
