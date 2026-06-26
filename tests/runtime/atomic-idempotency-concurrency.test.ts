@@ -148,6 +148,7 @@ describe('Atomic Idempotency and Webhook Deduplication Concurrency Tests (#205)'
         return;
       }
 
+      const database = db;
       const scope = 'test:concurrent:pg';
       const idempotencyKey = 'key-123-pg';
       const requestHash = 'hash-abc-pg';
@@ -155,7 +156,7 @@ describe('Atomic Idempotency and Webhook Deduplication Concurrency Tests (#205)'
 
       // Simulate concurrent inserts by firing multiple promises at once
       const promises = Array.from({ length: 10 }, () =>
-        db.insertOrGetIdempotencyRecord({
+        database.insertOrGetIdempotencyRecord({
           id,
           scope,
           idempotencyKey,
@@ -174,7 +175,7 @@ describe('Atomic Idempotency and Webhook Deduplication Concurrency Tests (#205)'
       expect(results.every((r) => r.idempotencyKey === idempotencyKey)).toBe(true);
 
       // Verify only one record exists in the database
-      const existing = await db.getIdempotencyRecord(scope, idempotencyKey);
+      const existing = await database.getIdempotencyRecord(scope, idempotencyKey);
       expect(existing).not.toBeNull();
       expect(existing?.id).toBe(firstRecord.id);
     });
@@ -185,12 +186,13 @@ describe('Atomic Idempotency and Webhook Deduplication Concurrency Tests (#205)'
         return;
       }
 
+      const database = db;
       const eventId = `evt-${randomUUID()}`;
       const payload = { type: 'test', data: 'value-pg' };
 
       // Simulate concurrent inserts by firing multiple promises at once
       const promises = Array.from({ length: 10 }, () =>
-        db.insertOrGetWebhookEvent({
+        database.insertOrGetWebhookEvent({
           id: randomUUID(),
           eventId,
           provider: 'test-provider',
@@ -220,9 +222,10 @@ describe('Atomic Idempotency and Webhook Deduplication Concurrency Tests (#205)'
         return;
       }
 
+      const database = db;
       const scope = 'test:concurrent-different:pg';
       const promises = Array.from({ length: 10 }, (_, i) =>
-        db.insertOrGetIdempotencyRecord({
+        database.insertOrGetIdempotencyRecord({
           id: randomUUID(),
           scope,
           idempotencyKey: `key-${i}-pg`,
